@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Student Management System — A modern web app to manage student records with Firebase Firestore.">
+
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+
+    <!-- Google Fonts — Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons (CDN) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- Chart.js (for analytics pages) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    {% include 'components/navbar.html' %}
+
+    <!-- Flash Messages → Toast Notifications -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="toast-container" class="toast-container">
+                {% for category, message in messages %}
+                    <div class="toast toast--{{ category }}" data-auto-dismiss="4000">
+                        <div class="toast__icon">
+                            {% if category == 'success' %}
+                                <i data-lucide="check-circle"></i>
+                            {% elif category == 'error' %}
+                                <i data-lucide="x-circle"></i>
+                            {% elif category == 'warning' %}
+                                <i data-lucide="alert-triangle"></i>
+                            {% else %}
+                                <i data-lucide="info"></i>
+                            {% endif %}
+                        </div>
+                        <span class="toast__message">{{ message }}</span>
+                        <button class="toast__close" onclick="this.parentElement.remove()">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- App Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts_extra %}{% endblock %}
+
+    <!-- Initialize Lucide Icons -->
+    <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<nav class="navbar" id="main-navbar">
+    <div class="navbar__inner container">
+        <!-- Logo / Brand -->
+        <a href="{{ url_for('main.dashboard') }}" class="navbar__brand" id="nav-brand">
+            <div class="navbar__logo">
+                <i data-lucide="graduation-cap"></i>
+            </div>
+            <span class="navbar__title">SMS</span>
+        </a>
+
+        <!-- Nav Links (desktop) -->
+        <ul class="navbar__links" id="nav-links">
+            <li>
+                <a href="{{ url_for('main.dashboard') }}" class="navbar__link {% if request.endpoint == 'main.dashboard' %}navbar__link--active{% endif %}" id="nav-dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('students.list_students') }}" class="navbar__link {% if request.endpoint and 'students' in request.endpoint %}navbar__link--active{% endif %}" id="nav-students">
+                    <i data-lucide="users"></i>
+                    <span>Students</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('students.add_student_form') }}" class="navbar__link {% if request.endpoint == 'students.add_student_form' %}navbar__link--active{% endif %}" id="nav-add">
+                    <i data-lucide="user-plus"></i>
+                    <span>Add Student</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Right side — Theme Toggle + Hamburger -->
+        <div class="navbar__actions">
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <i data-lucide="moon" class="theme-toggle__icon theme-toggle__icon--dark"></i>
+                <i data-lucide="sun" class="theme-toggle__icon theme-toggle__icon--light"></i>
+            </button>
+
+            <!-- Mobile Hamburger -->
+            <button class="navbar__hamburger" id="nav-hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="navbar__mobile-menu" id="mobile-menu">
+        <ul class="navbar__mobile-links">
+            <li>
+                <a href="{{ url_for('main.dashboard') }}" class="navbar__mobile-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('students.list_students') }}" class="navbar__mobile-link">
+                    <i data-lucide="users"></i>
+                    <span>Students</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('students.add_student_form') }}" class="navbar__mobile-link">
+                    <i data-lucide="user-plus"></i>
+                    <span>Add Student</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Students — {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header animate-in">
+    <div>
+        <h1 class="page-header__title">Students</h1>
+        <p class="page-header__subtitle">
+            <span id="student-count">{{ students|length }}</span> records found
+        </p>
+    </div>
+    <div class="page-header__actions">
+        <a href="{{ url_for('export.export_csv') }}" class="btn btn--secondary" id="btn-export-csv">
+            <i data-lucide="download"></i>
+            Export CSV
+        </a>
+        <a href="{{ url_for('students.add_student_form') }}" class="btn btn--primary" id="btn-add-student">
+            <i data-lucide="user-plus"></i>
+            Add Student
+        </a>
+    </div>
+</div>
+
+<!-- Search & Filter Bar -->
+<div class="search-bar animate-in">
+    <div class="search-input-wrapper">
+        <i data-lucide="search"></i>
+        <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Search by name or roll number..."
+            autocomplete="off"
+        >
+    </div>
+    <select id="filter-department" class="filter-select">
+        <option value="">All Departments</option>
+        {% for dept in departments %}
+            <option value="{{ dept }}">{{ dept }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+{% if students %}
+<!-- Student Table -->
+<div class="table-wrapper animate-in">
+    <table class="table" id="students-table">
+        <thead>
+            <tr>
+                <th data-sort="roll_number">Roll No <span class="sort-icon">↕</span></th>
+                <th data-sort="name">Name <span class="sort-icon">↕</span></th>
+                <th data-sort="department">Department <span class="sort-icon">↕</span></th>
+                <th data-sort="marks">Marks <span class="sort-icon">↕</span></th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="students-tbody">
+            {% for student in students %}
+            <tr data-name="{{ student.name|lower }}" data-roll="{{ student.roll_number|lower }}" data-department="{{ student.department }}">
+                <td><code>{{ student.roll_number }}</code></td>
+                <td>{{ student.name }}</td>
+                <td><span class="badge">{{ student.department }}</span></td>
+                <td>{{ student.marks }}</td>
+                <td class="text-muted">{{ student.email or '—' }}</td>
+                <td class="text-muted">{{ student.phone or '—' }}</td>
+                <td>
+                    <div class="table__actions">
+                        <a href="{{ url_for('students.edit_student_form', roll=student.roll_number) }}" class="btn btn--ghost btn--sm" title="Edit">
+                            <i data-lucide="pencil"></i>
+                        </a>
+                        <button
+                            class="btn btn--danger btn--sm"
+                            title="Delete"
+                            onclick="openDeleteModal('{{ student.name }}', '{{ url_for('students.delete_student', roll=student.roll_number) }}')"
+                        >
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- No Search Results -->
+<div id="no-results" class="empty-state" style="display: none;">
+    <div class="empty-state__icon">
+        <i data-lucide="search-x"></i>
+    </div>
+    <h3 class="empty-state__title">No results found</h3>
+    <p class="empty-state__message">Try adjusting your search terms or filter.</p>
+</div>
+
+{% else %}
+<!-- Empty State -->
+<div class="empty-state animate-in">
+    <div class="empty-state__icon">
+        <i data-lucide="users"></i>
+    </div>
+    <h3 class="empty-state__title">No students yet</h3>
+    <p class="empty-state__message">Get started by adding your first student record.</p>
+    <a href="{{ url_for('students.add_student_form') }}" class="btn btn--primary btn--lg">
+        <i data-lucide="user-plus"></i>
+        Add First Student
+    </a>
+</div>
+{% endif %}
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="delete-modal-overlay">
+    <div class="modal">
+        <div class="modal__icon">
+            <i data-lucide="alert-triangle"></i>
+        </div>
+        <h3 class="modal__title">Delete Student</h3>
+        <p class="modal__message">
+            Are you sure you want to delete <strong id="delete-student-name"></strong>?
+            This action cannot be undone.
+        </p>
+        <div class="modal__actions">
+            <button class="btn btn--secondary" onclick="closeDeleteModal()">Cancel</button>
+            <form id="delete-form" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn--danger">
+                    <i data-lucide="trash-2"></i>
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

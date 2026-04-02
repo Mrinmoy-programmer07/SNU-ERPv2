@@ -1,0 +1,27 @@
+<!-- Delete Confirmation Modal
+     Opened via openDeleteModal(studentName, deleteUrl) from main.js.
+     Closed via closeDeleteModal() or by clicking the overlay / pressing Escape.
+-->
+<div class="modal-overlay" id="delete-modal-overlay">
+    <div class="modal">
+        <div class="modal__icon">
+            <i data-lucide="alert-triangle"></i>
+        </div>
+        <h3 class="modal__title">Delete Student</h3>
+        <p class="modal__message">
+            Are you sure you want to delete <strong id="delete-student-name"></strong>?
+            This action cannot be undone.
+        </p>
+        <div class="modal__actions">
+            <button class="btn btn--secondary" onclick="closeDeleteModal()">
+                Cancel
+            </button>
+            <form id="delete-form" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn--danger">
+                    <i data-lucide="trash-2"></i>
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

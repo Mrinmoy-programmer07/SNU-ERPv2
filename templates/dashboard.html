@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header animate-in">
+    <div>
+        <h1 class="page-header__title">Dashboard</h1>
+        <p class="page-header__subtitle">Welcome back. Here's your student data overview.</p>
+    </div>
+    <div class="page-header__actions">
+        <a href="{{ url_for('students.add_student_form') }}" class="btn btn--primary" id="dash-add-student">
+            <i data-lucide="user-plus"></i>
+            Add Student
+        </a>
+    </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="stats-grid">
+    <div class="stat-card animate-in" id="stat-total">
+        <div class="stat-card__icon">
+            <i data-lucide="users"></i>
+        </div>
+        <div class="stat-card__value" data-count-up>{{ stats.total_students }}</div>
+        <div class="stat-card__label">Total Students</div>
+    </div>
+
+    <div class="stat-card animate-in" id="stat-average">
+        <div class="stat-card__icon stat-card__icon--success">
+            <i data-lucide="bar-chart-3"></i>
+        </div>
+        <div class="stat-card__value" data-count-up>{{ stats.average_marks }}</div>
+        <div class="stat-card__label">Average Marks</div>
+    </div>
+
+    <div class="stat-card animate-in" id="stat-top">
+        <div class="stat-card__icon stat-card__icon--warning">
+            <i data-lucide="trophy"></i>
+        </div>
+        <div class="stat-card__value">
+            {% if stats.top_scorer %}
+                {{ stats.top_scorer.name }}
+            {% else %}
+                —
+            {% endif %}
+        </div>
+        <div class="stat-card__label">Top Scorer</div>
+    </div>
+
+    <div class="stat-card animate-in" id="stat-departments">
+        <div class="stat-card__icon stat-card__icon--danger">
+            <i data-lucide="building-2"></i>
+        </div>
+        <div class="stat-card__value" data-count-up>{{ stats.department_count }}</div>
+        <div class="stat-card__label">Departments</div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card card--no-hover animate-in">
+    <h2 style="font-size: var(--fs-lg); font-weight: var(--fw-semibold); margin-bottom: var(--space-lg);">
+        Quick Actions
+    </h2>
+    <div class="flex gap-md" style="flex-wrap: wrap;">
+        <a href="{{ url_for('students.list_students') }}" class="btn btn--secondary" id="dash-view-all">
+            <i data-lucide="list"></i>
+            View All Students
+        </a>
+        <a href="{{ url_for('students.add_student_form') }}" class="btn btn--success" id="dash-add-new">
+            <i data-lucide="plus"></i>
+            Add New Student
+        </a>
+        <a href="{{ url_for('export.export_csv') }}" class="btn btn--secondary" id="dash-export">
+            <i data-lucide="download"></i>
+            Export CSV
+        </a>
+    </div>
+</div>
+
+{% if recent_students %}
+<div class="card card--no-hover animate-in mt-xl">
+    <h2 style="font-size: var(--fs-lg); font-weight: var(--fw-semibold); margin-bottom: var(--space-lg);">
+        Recently Added
+    </h2>
+    <div class="table-wrapper" style="border: none;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Marks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in recent_students %}
+                <tr>
+                    <td><code>{{ student.roll_number }}</code></td>
+                    <td>{{ student.name }}</td>
+                    <td><span class="badge">{{ student.department }}</span></td>
+                    <td>{{ student.marks }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    // Count-up animation for stat cards
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-count-up]').forEach((el) => {
+            window.animateCountUp(el);
+        });
+    });
+</script>
+{% endblock %}

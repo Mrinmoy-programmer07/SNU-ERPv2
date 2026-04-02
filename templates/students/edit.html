@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Student — {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header animate-in">
+    <div>
+        <h1 class="page-header__title">Edit Student</h1>
+        <p class="page-header__subtitle">Modify the details for student <strong>{{ roll }}</strong>.</p>
+    </div>
+    <div class="page-header__actions">
+        <a href="{{ url_for('students.list_students') }}" class="btn btn--secondary">
+            <i data-lucide="arrow-left"></i>
+            Back to List
+        </a>
+    </div>
+</div>
+
+{% if student %}
+<div class="card card--no-hover animate-in" style="max-width: 720px;">
+    <form method="POST" action="{{ url_for('students.edit_student', roll=student.roll_number) }}" id="edit-student-form" novalidate>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="roll_number" class="form-label">Roll Number</label>
+                <input
+                    type="text"
+                    id="roll_number"
+                    name="roll_number"
+                    class="form-input"
+                    value="{{ student.roll_number }}"
+                    readonly
+                    style="opacity: 0.6; cursor: not-allowed;"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="name" class="form-label">Full Name *</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-input"
+                    placeholder="e.g. Rahul Sharma"
+                    required
+                    value="{{ student.name }}"
+                >
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="department" class="form-label">Department *</label>
+                <select id="department" name="department" class="form-input form-select" required>
+                    <option value="" disabled>Select department</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept }}" {% if student.department == dept %}selected{% endif %}>
+                            {{ dept }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="marks" class="form-label">Marks (0–100) *</label>
+                <input
+                    type="number"
+                    id="marks"
+                    name="marks"
+                    class="form-input"
+                    placeholder="e.g. 85"
+                    min="0"
+                    max="100"
+                    required
+                    value="{{ student.marks }}"
+                >
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="e.g. rahul@example.com"
+                    value="{{ student.email or '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="phone" class="form-label">Phone</label>
+                <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    class="form-input"
+                    placeholder="e.g. 9876543210"
+                    value="{{ student.phone or '' }}"
+                >
+            </div>
+        </div>
+
+        <div class="flex gap-md mt-lg">
+            <button type="submit" class="btn btn--primary btn--lg" id="btn-update-student">
+                <i data-lucide="save"></i>
+                Update Student
+            </button>
+            <a href="{{ url_for('students.list_students') }}" class="btn btn--secondary btn--lg">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% else %}
+<div class="empty-state animate-in">
+    <div class="empty-state__icon" style="background: var(--danger-subtle); color: var(--danger);">
+        <i data-lucide="user-x"></i>
+    </div>
+    <h3 class="empty-state__title">Student Not Found</h3>
+    <p class="empty-state__message">No student record exists with roll number <strong>{{ roll }}</strong>.</p>
+    <a href="{{ url_for('students.list_students') }}" class="btn btn--primary btn--lg">
+        <i data-lucide="arrow-left"></i>
+        Back to Students
+    </a>
+</div>
+{% endif %}
+{% endblock %}
