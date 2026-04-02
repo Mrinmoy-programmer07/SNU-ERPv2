@@ -268,7 +268,60 @@
 
 ---
 
-## Phase 3 — Search, Filter & Enhancements (Next)
-- **Status**: 🔴 Not Started
-- Will implement: CSV export/import, (search/filter/sort already done in Phase 1)
+## Phase 3 — Search, Filter & Enhancements ✅ COMPLETE
 
+### 📅 Session: 2026-04-02
+
+---
+
+### 3.1 Search, Filter & Sort Bar ✅ (Already built in Phase 1)
+- Implemented real-time debounced search (300ms) by name or roll number (`static/js/search.js`)
+- Department dropdown filter
+- Combined filter logic (Search + Department)
+- Emits "No results found" empty state toggle dynamically
+- Column sorting interface (Name, Roll, Department, Marks) with ascending/descending states
+
+### 3.2 CSV Export ✅
+- Updated `routes/export_routes.py` -> `export_csv()`
+- Fetches all documents from Firebase
+- Maps keys to clear column headers (`Roll Number, Name, Department, Marks, Email, Phone, Added On, Last Updated`)
+- Uses Python `csv.DictWriter` and `io.StringIO`
+- Returns response with dynamic attachment filename: `students_export_YYYYMMDD.csv`
+
+### 3.3 CSV Import ✅
+- Updated `routes/export_routes.py` -> `import_csv()`
+- Accepts file upload via multi-part form
+- Checks file format (.csv)
+- Streams content and reads as Dictionary
+- Row-by-row validation using `validate_student_data`
+- Defensively checks for duplicate `roll_number`
+- Inserts valid objects; silently skips/tallies invalid ones
+- Flashes success tally `Successfully imported X students. (Y rows failed validation or were duplicates)`.
+
+### 3.4 UI Buttons Integration ✅
+- Modified `templates/students/list.html`
+- Wired `Export CSV` button to hit `export_csv` endpoint
+- Added an `Import CSV` action next to Export, using a hidden file input `<input type="file" onchange="document.getElementById('import-form').submit();">`
+- Elegant integration with the UI layout
+
+---
+
+### ✅ Phase 3 Verification
+- **Search capabilities**: Previously verified in Phase 1
+- **Exporting records**: Python `requests` client successfully received a properly formatted CSV attachment with 200 HTTP status code.
+- **Importing records**: Valid CSV uploads parse correctly, trigger student service logic, and correctly handle format checks. Invalid data like bad departments (e.g., `MECH`) properly raise validation errors and do not crash the endpoint. Flash notifications accurately report statuses.
+
+---
+
+### Changes Log (Phase 3):
+| # | Change | File(s) | Notes |
+|---|--------|---------|-------|
+| 29 | Implemented export route | `routes/export_routes.py` | CSV generation using StringIO |
+| 30 | Implemented import route | `routes/export_routes.py` | Row-by-row validation & skipping logic |
+| 31 | Added Import UI | `templates/students/list.html`| Hidden form and file selector combo |
+
+---
+
+## Phase 4 — Analytics & Polish (Next)
+- **Status**: 🔴 Not Started
+- Will implement: Advanced dashboard charts, loading animations, robust error boundary

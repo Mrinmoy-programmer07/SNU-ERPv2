@@ -11,6 +11,13 @@
         </p>
     </div>
     <div class="page-header__actions">
+        <form id="import-form" action="{{ url_for('export.import_csv') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+            <input type="file" id="import-file" name="csv_file" accept=".csv" onchange="document.getElementById('import-form').submit();">
+        </form>
+        <button class="btn btn--secondary" onclick="document.getElementById('import-file').click();">
+            <i data-lucide="upload"></i>
+            Import CSV
+        </button>
         <a href="{{ url_for('export.export_csv') }}" class="btn btn--secondary" id="btn-export-csv">
             <i data-lucide="download"></i>
             Export CSV
