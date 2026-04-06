@@ -21,8 +21,8 @@
         localStorage.setItem(THEME_KEY, theme);
     }
 
-    // Apply saved theme immediately (prevents flash)
-    setTheme(getStoredTheme());
+    // Function definition preserved for event listeners
+    // Initialization moved to base.html inline script to prevent flash
 
     document.addEventListener('DOMContentLoaded', () => {
         const toggleBtn = document.getElementById('theme-toggle');

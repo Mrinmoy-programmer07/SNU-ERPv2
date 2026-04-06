@@ -80,17 +80,25 @@ def get_student(roll_number: str) -> dict | None:
     """Get a single student document by roll number.
 
     Args:
-        roll_number: The student's roll number (used as document ID).
+        roll_number: The student's roll number (used as document ID or field).
 
     Returns:
         A dict of the student's data with 'id' field, or None if not found.
     """
     db = get_db()
-    doc = db.collection(STUDENTS_COLLECTION).document(roll_number).get()
+    doc_ref = db.collection(STUDENTS_COLLECTION).document(roll_number)
+    doc = doc_ref.get()
 
     if doc.exists:
         data = doc.to_dict()
         data["id"] = doc.id
+        return data
+
+    # Fallback: query by roll_number field
+    docs = db.collection(STUDENTS_COLLECTION).where("roll_number", "==", roll_number).limit(1).stream()
+    for d in docs:
+        data = d.to_dict()
+        data["id"] = d.id
         return data
 
     return None
@@ -138,7 +146,7 @@ def update_student(roll_number: str, data: dict) -> bool:
     Automatically updates the 'last_updated' timestamp.
 
     Args:
-        roll_number: The student's roll number (document ID).
+        roll_number: The student's roll number (document ID or field).
         data: A dict of fields to update.
 
     Returns:
@@ -148,7 +156,11 @@ def update_student(roll_number: str, data: dict) -> bool:
     doc_ref = db.collection(STUDENTS_COLLECTION).document(roll_number)
 
     if not doc_ref.get().exists:
-        return False
+        # Fallback to query by roll_number field
+        docs = list(db.collection(STUDENTS_COLLECTION).where("roll_number", "==", roll_number).limit(1).stream())
+        if not docs:
+            return False
+        doc_ref = docs[0].reference
 
     update_data = {}
     if "name" in data:
@@ -172,7 +184,7 @@ def delete_student(roll_number: str) -> bool:
     """Delete a student document from Firestore.
 
     Args:
-        roll_number: The student's roll number (document ID).
+        roll_number: The student's roll number (document ID or field).
 
     Returns:
         True if the document existed and was deleted, False otherwise.
@@ -181,7 +193,11 @@ def delete_student(roll_number: str) -> bool:
     doc_ref = db.collection(STUDENTS_COLLECTION).document(roll_number)
 
     if not doc_ref.get().exists:
-        return False
+        # Fallback to query by roll_number field
+        docs = list(db.collection(STUDENTS_COLLECTION).where("roll_number", "==", roll_number).limit(1).stream())
+        if not docs:
+            return False
+        doc_ref = docs[0].reference
 
     doc_ref.delete()
     return True
@@ -191,14 +207,19 @@ def student_exists(roll_number: str) -> bool:
     """Check if a student document exists in Firestore.
 
     Args:
-        roll_number: The student's roll number (document ID).
+        roll_number: The student's roll number (document ID or field).
 
     Returns:
         True if the document exists, False otherwise.
     """
     db = get_db()
     doc = db.collection(STUDENTS_COLLECTION).document(roll_number).get()
-    return doc.exists
+    if doc.exists:
+        return True
+    
+    # Fallback to query by roll_number field
+    docs = list(db.collection(STUDENTS_COLLECTION).where("roll_number", "==", roll_number).limit(1).stream())
+    return len(docs) > 0
 
 
 # ---------------------------------------------------------------------------
