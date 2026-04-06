@@ -38,8 +38,20 @@ def create_app() -> Flask:
     def inject_globals():
         return {
             "departments": Config.DEPARTMENTS,
-            "app_name": "Student Management System",
+            "years": [1, 2, 3, 4],
+            "app_name": "SNU-ERP V2",
         }
+
+    # Error boundaries
+    from flask import render_template
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template("errors/404.html"), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        return render_template("errors/500.html"), 500
 
     return app
 

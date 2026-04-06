@@ -56,6 +56,18 @@ def validate_student_data(data: dict, is_edit: bool = False) -> dict:
                 errors["marks"] = "Marks must be between 0 and 100."
         except (ValueError, TypeError):
             errors["marks"] = "Marks must be a valid number."
+            
+    # Year — required, 1-4
+    year_raw = data.get("year", "").strip() if isinstance(data.get("year"), str) else data.get("year")
+    if year_raw == "" or year_raw is None:
+        errors["year"] = "Year is required."
+    else:
+        try:
+            year = int(year_raw)
+            if year < 1 or year > 4:
+                errors["year"] = "Year must be between 1 and 4."
+        except (ValueError, TypeError):
+            errors["year"] = "Year must be a valid number."
 
     # Email — optional, but validate format if provided
     email = data.get("email", "").strip()
@@ -91,6 +103,7 @@ def format_student_for_display(student: dict) -> dict:
         "roll_number": student.get("roll_number", ""),
         "name": student.get("name", ""),
         "department": student.get("department", ""),
+        "year": student.get("year", 1), # Default to 1 if not present
         "marks": student.get("marks", 0),
         "email": student.get("email", ""),
         "phone": student.get("phone", ""),
@@ -134,6 +147,7 @@ def prepare_student_for_save(form_data: dict) -> dict:
         "roll_number": form_data.get("roll_number", "").strip().upper(),
         "name": form_data.get("name", "").strip().title(),
         "department": form_data.get("department", "").strip().upper(),
+        "year": int(form_data.get("year", 1)),
         "marks": int(form_data.get("marks", 0)),
         "email": form_data.get("email", "").strip().lower(),
         "phone": form_data.get("phone", "").strip(),

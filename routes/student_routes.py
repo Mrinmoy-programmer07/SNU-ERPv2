@@ -53,6 +53,7 @@ def add_student():
         "roll_number": request.form.get("roll_number", ""),
         "name": request.form.get("name", ""),
         "department": request.form.get("department", ""),
+        "year": request.form.get("year", ""),
         "marks": request.form.get("marks", ""),
         "email": request.form.get("email", ""),
         "phone": request.form.get("phone", ""),
@@ -133,6 +134,7 @@ def edit_student(roll):
     form_data = {
         "name": request.form.get("name", ""),
         "department": request.form.get("department", ""),
+        "year": request.form.get("year", ""),
         "marks": request.form.get("marks", ""),
         "email": request.form.get("email", ""),
         "phone": request.form.get("phone", ""),

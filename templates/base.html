@@ -61,6 +61,11 @@
         </div>
     </main>
 
+    <!-- Global Loading Overlay -->
+    <div id="global-loader" class="global-loader">
+        <div class="spinner"></div>
+    </div>
+
     <!-- App Scripts -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block scripts_extra %}{% endblock %}

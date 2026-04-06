@@ -234,4 +234,52 @@
         }, 4000);
     };
 
+    // ────────────────────────────────────────────────────────────
+    // 7. GLOBAL LOADER (Phase 4 Polish)
+    // ────────────────────────────────────────────────────────────
+
+    window.addEventListener('load', () => {
+        const loader = document.getElementById('global-loader');
+        if (loader) {
+            loader.classList.add('global-loader--hidden');
+        }
+    });
+
+    // Show loader on page transition (when clicking normal links)
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (!link) return;
+        
+        // Don't show loader for new tabs, anchor links, or download links
+        const target = link.getAttribute('target');
+        const href = link.getAttribute('href');
+        
+        if (
+            target === '_blank' || 
+            (href && href.startsWith('#')) ||
+            link.hasAttribute('download')
+        ) {
+            return;
+        }
+
+        // Only show if it's actually navigating to a new URL
+        if (href && href !== window.location.pathname) {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.remove('global-loader--hidden');
+            }
+        }
+    });
+
+    // Show loader on form submit (except search inputs which do dynamic filtering)
+    document.addEventListener('submit', (e) => {
+        const formId = e.target.id;
+        if (formId !== 'search-form') { // adjust if you have a search form
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.remove('global-loader--hidden');
+            }
+        }
+    });
+
 })();

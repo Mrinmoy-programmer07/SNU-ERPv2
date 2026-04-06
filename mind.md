@@ -322,6 +322,13 @@
 
 ---
 
-## Phase 4 — Analytics & Polish (Next)
+## Phase 4 — Analytics & Polish
+- **Status**: 🟢 Completed
+- Implemented: Advanced Chart.js dashboard charts for student distribution and marks.
+- Added global loading animations and count-up number animations in JS.
+- Created robust error boundary rendering 404/500 UI templates via `app.errorhandler`.
+- Verified via browser subagent that charts render correctly and 404 boundaries function.
+
+## Phase 5 — Deployment (Next)
 - **Status**: 🔴 Not Started
-- Will implement: Advanced dashboard charts, loading animations, robust error boundary
+- Tasks: Environment variable configuration for `firebase-key.json` to support deployment on platforms like Render or Railway.

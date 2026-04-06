@@ -47,6 +47,12 @@
             <option value="{{ dept }}">{{ dept }}</option>
         {% endfor %}
     </select>
+    <select id="filter-year" class="filter-select">
+        <option value="">All Years</option>
+        {% for year in years %}
+            <option value="{{ year }}">{{ year }}{% if year == 1 %}st{% elif year == 2 %}nd{% elif year == 3 %}rd{% else %}th{% endif %} Year</option>
+        {% endfor %}
+    </select>
 </div>
 
 {% if students %}
@@ -58,6 +64,7 @@
                 <th data-sort="roll_number">Roll No <span class="sort-icon">↕</span></th>
                 <th data-sort="name">Name <span class="sort-icon">↕</span></th>
                 <th data-sort="department">Department <span class="sort-icon">↕</span></th>
+                <th data-sort="year">Year <span class="sort-icon">↕</span></th>
                 <th data-sort="marks">Marks <span class="sort-icon">↕</span></th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -66,10 +73,11 @@
         </thead>
         <tbody id="students-tbody">
             {% for student in students %}
-            <tr data-name="{{ student.name|lower }}" data-roll="{{ student.roll_number|lower }}" data-department="{{ student.department }}">
+            <tr data-name="{{ student.name|lower }}" data-roll="{{ student.roll_number|lower }}" data-department="{{ student.department }}" data-year="{{ student.year }}">
                 <td><code>{{ student.roll_number }}</code></td>
                 <td>{{ student.name }}</td>
                 <td><span class="badge">{{ student.department }}</span></td>
+                <td><span class="badge" style="background: var(--surface-3); border-color: var(--border-color); color: var(--text-secondary);">Year {{ student.year }}</span></td>
                 <td>{{ student.marks }}</td>
                 <td class="text-muted">{{ student.email or '—' }}</td>
                 <td class="text-muted">{{ student.phone or '—' }}</td>

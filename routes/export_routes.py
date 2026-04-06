@@ -24,7 +24,7 @@ def export_csv():
         si = io.StringIO()
         
         # Define CSV headers
-        fieldnames = ["Roll Number", "Name", "Department", "Marks", "Email", "Phone", "Added On", "Last Updated"]
+        fieldnames = ["Roll Number", "Name", "Department", "Year", "Marks", "Email", "Phone", "Added On", "Last Updated"]
         writer = csv.DictWriter(si, fieldnames=fieldnames)
         
         writer.writeheader()
@@ -34,6 +34,7 @@ def export_csv():
                 "Roll Number": s.get("roll_number", ""),
                 "Name": s.get("name", ""),
                 "Department": s.get("department", ""),
+                "Year": s.get("year", 1),
                 "Marks": s.get("marks", ""),
                 "Email": s.get("email", ""),
                 "Phone": s.get("phone", ""),
@@ -83,7 +84,7 @@ def import_csv():
         error_count = 0
         
         # Expected column names in CSV (can be flexible, but these are from our export)
-        # Roll Number, Name, Department, Marks, Email, Phone
+        # Roll Number, Name, Department, Year, Marks, Email, Phone
         # Map them if possible, or fall back to lowercase snake_case
         
         for row in csv_input:
@@ -92,6 +93,7 @@ def import_csv():
                 "roll_number": row.get("Roll Number", row.get("roll_number", "")),
                 "name": row.get("Name", row.get("name", "")),
                 "department": row.get("Department", row.get("department", "")),
+                "year": row.get("Year", row.get("year", 1)),
                 "marks": row.get("Marks", row.get("marks", "")),
                 "email": row.get("Email", row.get("email", "")),
                 "phone": row.get("Phone", row.get("phone", ""))

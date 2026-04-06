@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Not Found — {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="empty-state animate-in" style="margin-top: var(--space-3xl);">
+    <div class="empty-state__icon" style="color: var(--warning); background-color: var(--warning-subtle);">
+        <i data-lucide="map-pin-off"></i>
+    </div>
+    <h1 style="font-size: var(--fs-3xl); font-weight: var(--fw-extrabold); color: var(--text-primary); margin-bottom: var(--space-sm);">
+        404
+    </h1>
+    <h3 class="empty-state__title">Page Not Found</h3>
+    <p class="empty-state__message">We couldn't find the page you're looking for. It might have been moved or doesn't exist.</p>
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn--primary btn--lg" style="margin-top: var(--space-md);">
+        <i data-lucide="home"></i>
+        Return to Dashboard
+    </a>
+</div>
+{% endblock %}

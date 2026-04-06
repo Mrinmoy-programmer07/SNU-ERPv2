@@ -57,6 +57,31 @@
     </div>
 </div>
 
+<!-- Dashboard Charts -->
+{% if stats.total_students > 0 %}
+<div class="charts-grid mt-xl animate-in" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-lg);">
+    <!-- Chart 1: Department Distribution -->
+    <div class="card card--no-hover">
+        <h2 style="font-size: var(--fs-md); font-weight: var(--fw-semibold); margin-bottom: var(--space-md); color: var(--color-foreground);">
+            Student Distribution by Department
+        </h2>
+        <div style="position: relative; height: 250px;">
+            <canvas id="deptDistributionChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 2: Average Marks by Department -->
+    <div class="card card--no-hover">
+        <h2 style="font-size: var(--fs-md); font-weight: var(--fw-semibold); margin-bottom: var(--space-md); color: var(--color-foreground);">
+            Average Marks by Department
+        </h2>
+        <div style="position: relative; height: 250px;">
+            <canvas id="deptMarksChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- Quick Actions -->
 <div class="card card--no-hover animate-in">
     <h2 style="font-size: var(--fs-lg); font-weight: var(--fw-semibold); margin-bottom: var(--space-lg);">
@@ -117,6 +142,101 @@
         document.querySelectorAll('[data-count-up]').forEach((el) => {
             window.animateCountUp(el);
         });
+
+        // Initialize Charts if data exists
+        {% if stats.total_students > 0 %}
+        const deptLabels = {{ stats.dept_distribution.keys() | list | tojson | safe }};
+        const deptCounts = {{ stats.dept_distribution.values() | list | tojson | safe }};
+        const deptAvgMarks = {{ stats.dept_avg_marks.values() | list | tojson | safe }};
+
+        // Get CSS variables for theming
+        const getCSSVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+        const chartColors = [
+            getCSSVar('--color-primary'),
+            getCSSVar('--color-success'),
+            getCSSVar('--color-warning'),
+            getCSSVar('--color-danger'),
+            '#8b5cf6', // Violet
+            '#0ea5e9'  // Sky
+        ];
+
+        // Ensure Chart.js is loaded
+        if (typeof Chart !== 'undefined') {
+            // Chart Defaults for Dark Theme Support
+            Chart.defaults.color = getCSSVar('--color-muted');
+            Chart.defaults.font.family = getCSSVar('--font-family');
+            Chart.defaults.plugins.tooltip.backgroundColor = getCSSVar('--color-background-elevated');
+            Chart.defaults.plugins.tooltip.titleColor = getCSSVar('--color-foreground');
+            Chart.defaults.plugins.tooltip.bodyColor = getCSSVar('--color-foreground');
+            Chart.defaults.plugins.tooltip.borderColor = getCSSVar('--color-border');
+            Chart.defaults.plugins.tooltip.borderWidth = 1;
+
+            // 1. Department Distribution (Doughnut Chart)
+            const ctxDist = document.getElementById('deptDistributionChart').getContext('2d');
+            new Chart(ctxDist, {
+                type: 'doughnut',
+                data: {
+                    labels: deptLabels,
+                    datasets: [{
+                        data: deptCounts,
+                        backgroundColor: chartColors,
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // 2. Average Marks by Department (Bar Chart)
+            const ctxMarks = document.getElementById('deptMarksChart').getContext('2d');
+            new Chart(ctxMarks, {
+                type: 'bar',
+                data: {
+                    labels: deptLabels,
+                    datasets: [{
+                        label: 'Average Marks',
+                        data: deptAvgMarks,
+                        backgroundColor: getCSSVar('--color-primary'),
+                        borderRadius: 4,
+                        maxBarThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: getCSSVar('--color-border')
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        {% endif %}
     });
 </script>
 {% endblock %}

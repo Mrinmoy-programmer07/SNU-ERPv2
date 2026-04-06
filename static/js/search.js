@@ -7,6 +7,7 @@
 
     const searchInput = document.getElementById('search-input');
     const filterSelect = document.getElementById('filter-department');
+    const filterYear = document.getElementById('filter-year');
     const tbody = document.getElementById('students-tbody');
     const noResults = document.getElementById('no-results');
     const studentCount = document.getElementById('student-count');
@@ -19,6 +20,7 @@
     function filterTable() {
         const query = searchInput.value.toLowerCase().trim();
         const dept = filterSelect ? filterSelect.value : '';
+        const year = filterYear ? filterYear.value : '';
 
         const rows = tbody.querySelectorAll('tr');
         let visibleCount = 0;
@@ -27,11 +29,13 @@
             const name = row.dataset.name || '';
             const roll = row.dataset.roll || '';
             const rowDept = row.dataset.department || '';
+            const rowYear = row.dataset.year || '';
 
             const matchesSearch = !query || name.includes(query) || roll.includes(query);
             const matchesDept = !dept || rowDept === dept;
+            const matchesYear = !year || rowYear === year;
 
-            if (matchesSearch && matchesDept) {
+            if (matchesSearch && matchesDept && matchesYear) {
                 row.style.display = '';
                 visibleCount++;
             } else {
@@ -61,6 +65,10 @@
 
     if (filterSelect) {
         filterSelect.addEventListener('change', filterTable);
+    }
+    
+    if (filterYear) {
+        filterYear.addEventListener('change', filterTable);
     }
 
 
@@ -116,7 +124,8 @@
             roll_number: 0,
             name: 1,
             department: 2,
-            marks: 3,
+            year: 3,
+            marks: 4,
         };
         const idx = mapping[column];
         if (idx === undefined) return '';

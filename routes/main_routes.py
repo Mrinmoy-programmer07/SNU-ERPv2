@@ -35,6 +35,10 @@ def dashboard():
     top_scorer = None
     departments = set()
 
+    # Pre-calculate department stats for charts
+    dept_distribution = {}
+    dept_marks_sum = {}
+    
     if total > 0:
         marks_list = [s.get("marks", 0) for s in students]
         avg = round(sum(marks_list) / total, 1)
@@ -43,14 +47,27 @@ def dashboard():
         top_idx = marks_list.index(max(marks_list))
         top_scorer = students[top_idx]
 
-        # Unique departments
-        departments = set(s.get("department", "") for s in students if s.get("department"))
+        # Calculate department distributions
+        for s in students:
+            dept = s.get("department")
+            marks = s.get("marks", 0)
+            if dept:
+                departments.add(dept)
+                dept_distribution[dept] = dept_distribution.get(dept, 0) + 1
+                dept_marks_sum[dept] = dept_marks_sum.get(dept, 0) + marks
+                
+    # Calculate average marks per department
+    dept_avg_marks = {}
+    for dept, count in dept_distribution.items():
+        dept_avg_marks[dept] = round(dept_marks_sum[dept] / count, 1)
 
     stats = {
         "total_students": total,
         "average_marks": avg,
         "top_scorer": top_scorer,
         "department_count": len(departments),
+        "dept_distribution": dept_distribution,
+        "dept_avg_marks": dept_avg_marks,
     }
 
     # Recent students — sort by added_on descending, take first 5
