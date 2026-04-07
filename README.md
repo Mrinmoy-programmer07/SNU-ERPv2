@@ -97,6 +97,30 @@ Given that Firebase Firestore is a NoSQL schema-less document database, the proj
 
 ---
 
+## ⚙️ How the Backend Works
+
+The backend follows a distinct path for processing requests to maintain security, validation, and modularity. Here is the operational flow when a user interacts with the system (for example, adding a new student):
+
+1. **Routing Strategy (Blueprints)**:  
+   When a user submits a form to `/students/add`, the request is intercepted by the `student_routes.py` Flask Blueprint controller. The controller extracts the raw data payload from the global `request.form` dictionary.
+
+2. **Validation & Preparation (Service Layer)**:  
+   Before hitting the database, the data is passed to `student_service.py`:
+   - `validate_student_data()`: Applies business rules (e.g., marks must be between 0-100, roll numbers must be alphanumeric, names cannot be empty).
+   - If validation *fails*, it immediately throws errors back to the UI interface, pre-filling the form via Jinja2 so the user doesn't lose their input.
+   - If validation *succeeds*, it runs through `prepare_student_for_save()` to standardize the data (e.g., capitalizing names, stripping trailing spaces, ensuring roll numbers are uppercase).
+
+3. **Data Access & Fallbacks (Firebase Wrapper)**:  
+   The standardized dictionary is handed to `firebase_client.py`.
+   - The wrapper initiates a transaction with Firebase Firestore (`add_student(data)`).
+   - It securely communicates via gRPC using the Google Admin SDK credentials loaded via `.env`.
+   - **Resiliency Factor**: If a student is queried or edited, Firebase will first attempt a fast *O(1)* lookup using the Document ID. If the Document ID doesn't match the student's `roll_number` (which can happen during bulk CSV imports), the backend features a smart fallback that searches through the `students` collection by matching the actual `roll_number` field value.
+
+4. **Return Response**:  
+   Upon success, the Flask controller triggers a `flash()` success message and executes an HTTP 302 redirect back to the student list. On the frontend, Jinja2 evaluates the flashed message and triggers the `showToast()` JavaScript animation to confirm the operation to the user seamlessly.
+
+---
+
 ## 🚀 Installation & Setup
 
 1. **Clone the repository** (if from VCS) or navigate into the root directory.
